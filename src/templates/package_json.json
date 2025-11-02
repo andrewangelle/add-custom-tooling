@@ -1,0 +1,15 @@
+{
+  "scripts": {
+    "lint:fix": "pnpm exec biome check . --write",
+    "lint:check": "pnpm exec biome check .",
+    "format": "pnpm exec biome format . --write",
+    "pre-commit": "lint-staged",
+    "prepare": "husky"
+  }, 
+  "lint-staged": {
+    "*.{ts,tsx,js,jsx}": [
+      "pnpm lint:fix",
+      "pnpm format"
+    ]
+  }
+}

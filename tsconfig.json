@@ -1,0 +1,15 @@
+{
+  "compilerOptions": {
+    "jsx": "react-jsx",
+    "moduleResolution": "nodenext",
+    "module": "NodeNext",
+    "target": "ESNext",
+    "baseUrl": ".",
+    "noEmit": true,
+    "allowImportingTsExtensions": true,
+    "paths": {
+      "~/*": ["./src/*"]
+    }
+  },
+  "include": ["src/**/*"]
+}
