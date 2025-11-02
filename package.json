@@ -6,9 +6,11 @@
   "type": "module",
   "packageManager": "pnpm@9.10.0",
   "scripts": {
-    "lint:fix": "pnpm exec biome check . --write",
+    "clean": "rm -rf ./dist",
+    "build": "pnpm clean && tsup",
+    "lint:fix": "pnpm exec biome check . --write --unsafe",
     "lint:check": "pnpm exec biome check .",
-    "format": "pnpm exec biome format . --write --unsafe",
+    "format": "pnpm exec biome format . --write",
     "pre-commit": "lint-staged",
     "prepare": "husky"
   },
@@ -26,6 +28,7 @@
     "@types/npmcli__package-json": "^4.0.4",
     "husky": "^9.1.7",
     "lint-staged": "^16.2.6",
+    "tsup": "^8.5.0",
     "typescript": "^5.9.3"
   },
   "lint-staged": {

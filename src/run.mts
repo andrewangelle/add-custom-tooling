@@ -26,10 +26,14 @@ const flags: Flags = Object.entries(args).reduce((acc, [key, value]) => {
 const codeDir = path.resolve(import.meta.dirname, process.cwd(), '..');
 const workingDir = path.resolve(codeDir, flags.directory);
 
-await installPackages();
-await writeBiomeConfig();
-await updatePackageJson();
-await initHusky();
+run()
+
+async function run() {
+  await installPackages();
+  await writeBiomeConfig();
+  await updatePackageJson();
+  await initHusky();
+}
 
 /**
  * Implementation

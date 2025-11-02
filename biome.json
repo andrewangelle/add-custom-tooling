@@ -11,7 +11,7 @@
       "!**/dist",
       "!**/public",
       "!**/node_modules",
-      "**/src/**/*.mts"
+      "**/*.mts"
     ]
   },
   "formatter": { "enabled": true, "indentWidth": 2, "indentStyle": "space" },

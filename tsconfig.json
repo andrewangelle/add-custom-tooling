@@ -1,10 +1,10 @@
 {
   "compilerOptions": {
-    "jsx": "react-jsx",
     "moduleResolution": "nodenext",
-    "module": "NodeNext",
-    "target": "ESNext",
+    "module": "nodenext",
+    "target": "es2024",
     "baseUrl": ".",
+    "outDir": "dist",
     "noEmit": true,
     "allowImportingTsExtensions": true,
     "paths": {
