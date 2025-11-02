@@ -5,11 +5,8 @@
     "format": "pnpm exec biome format . --write",
     "pre-commit": "lint-staged",
     "prepare": "husky"
-  }, 
+  },
   "lint-staged": {
-    "*.{ts,tsx,js,jsx}": [
-      "pnpm lint:fix",
-      "pnpm format"
-    ]
+    "*.{ts,tsx,js,jsx}": ["pnpm lint:fix", "pnpm format"]
   }
 }

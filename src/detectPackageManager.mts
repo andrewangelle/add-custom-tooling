@@ -1,4 +1,4 @@
-type PackageManager = "npm" | "pnpm" | "yarn" | "bun";
+type PackageManager = 'npm' | 'pnpm' | 'yarn' | 'bun';
 
 /**
  * Determine which package manager the user prefers.
@@ -8,14 +8,14 @@ type PackageManager = "npm" | "pnpm" | "yarn" | "bun";
  * the command.
  */
 export const detectPackageManager = (): PackageManager | undefined => {
-  let { npm_config_user_agent } = process.env;
+  const { npm_config_user_agent } = process.env;
   if (!npm_config_user_agent) return 'pnpm';
   try {
-    let pkgManager = npm_config_user_agent.split("/")[0];
-    if (pkgManager === "npm") return "npm";
-    if (pkgManager === "pnpm") return "pnpm";
-    if (pkgManager === "yarn") return "yarn";
-    if (pkgManager === "bun") return "bun";
+    const pkgManager = npm_config_user_agent.split('/')[0];
+    if (pkgManager === 'npm') return 'npm';
+    if (pkgManager === 'pnpm') return 'pnpm';
+    if (pkgManager === 'yarn') return 'yarn';
+    if (pkgManager === 'bun') return 'bun';
     return 'pnpm';
   } catch {
     return 'pnpm';

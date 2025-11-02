@@ -8,8 +8,9 @@ export default function invariant<T>(
   message?: string,
 ): asserts value is T;
 
+// biome-ignore lint/suspicious/noExplicitAny: <>
 export default function invariant(value: any, message?: string) {
-  if (value === false || value === null || typeof value === "undefined") {
+  if (value === false || value === null || typeof value === 'undefined') {
     throw new Error(message);
   }
 }
