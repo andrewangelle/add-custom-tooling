@@ -1,7 +1,29 @@
+import path from 'node:path';
+import arg from 'arg';
 import { execa, type Options } from 'execa';
 import { detectPackageManager } from './detectPackageManager.mts';
 
 type ExecuteOptions = Pick<Options, 'cwd'>;
+
+type Flags = Record<'directory', string>;
+
+export const args = arg({
+  '--directory': String,
+  '-d': '--directory',
+});
+
+export const flags: Flags = Object.entries(args).reduce((acc, [key, value]) => {
+  key = key.replace(/^--/, '');
+  acc[key] = value;
+  return acc;
+}, {} as Flags);
+
+export const codeDir = path.resolve(
+  import.meta.dirname,
+  process.cwd(),
+  '../..',
+);
+export const workingDir = path.resolve(codeDir, flags.directory);
 
 export async function execute(
   command: string,
