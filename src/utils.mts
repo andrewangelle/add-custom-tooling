@@ -1,13 +1,27 @@
-import { execa } from 'execa';
+import { execa, type Options } from 'execa';
 import { detectPackageManager } from './detectPackageManager.mts';
 
-export async function execute(command: string, ...args: string[]) {
-  try {
-    const options = {
-      env: { FORCE_COLOR: '1' },
-    };
+type ExecuteOptions = Pick<Options, 'cwd'>;
 
-    const script = execa(command, args, options);
+export async function execute(
+  command: string,
+  ...args: (string | ExecuteOptions)[]
+) {
+  try {
+    let options: ExecuteOptions = {};
+    let cmdArgs = args;
+
+    const last = args[args.length - 1];
+
+    if (last && typeof last === 'object' && !Array.isArray(last)) {
+      options = last as ExecuteOptions;
+      cmdArgs = args.slice(0, -1);
+    }
+
+    const script = execa(command, cmdArgs as string[], {
+      env: { FORCE_COLOR: '1' },
+      ...options,
+    });
 
     for await (const line of script) {
       console.log(line);
@@ -15,12 +29,17 @@ export async function execute(command: string, ...args: string[]) {
 
     return 'completed successfully';
   } catch (error) {
-    console.error('command failed:', error.message);
-    return `command failed: ${error.message}`;
+    console.error('command failed:', (error as Error).message);
+    return `command failed: ${(error as Error).message}`;
   }
 }
 
-export async function install(command: string) {
+export async function install(command: string, cwd?: string) {
   const packageManager = detectPackageManager();
-  await execute(packageManager, 'i', '-D', command);
+  const options: ExecuteOptions | undefined = cwd ? { cwd } : undefined;
+  if (options) {
+    await execute(packageManager, 'i', '-D', command, options);
+  } else {
+    await execute(packageManager, 'i', '-D', command);
+  }
 }

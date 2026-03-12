@@ -24,7 +24,7 @@ const flags: Flags = Object.entries(args).reduce((acc, [key, value]) => {
   return acc;
 }, {} as Flags);
 
-const codeDir = path.resolve(import.meta.dirname, process.cwd(), '..');
+const codeDir = path.resolve(import.meta.dirname, process.cwd(), '../..');
 const workingDir = path.resolve(codeDir, flags.directory);
 
 run();
@@ -46,19 +46,21 @@ async function installPackages() {
   invariant(existsSync(workingDir), noWorkingDirMessage);
 
   // install tooling dependencies
-  await execute('cd', workingDir);
-  await install('husky');
-  await install('@biomejs/biome');
-  await install('lint-staged');
+  await install('husky', workingDir);
+  await install('@biomejs/biome', workingDir);
+  await install('lint-staged', workingDir);
 }
 
 async function writeBiomeConfig() {
-  // write biome config file 
   await writeFile(
     path.resolve(workingDir, './biome.json'),
     JSON.stringify(biomeConfig),
   );
 }
+
+type PackageJsonContent = Awaited<
+    ReturnType<typeof PackageJson.load>
+  >['content'];
 
 async function updatePackageJson() {
   // check that package.json file exists
@@ -68,12 +70,25 @@ async function updatePackageJson() {
   invariant(existsSync(packageJsonPath), noPackageJsonMessage);
 
   const pkgJson = await PackageJson.load(workingDir);
-  pkgJson.update(pkgJsonUpdates);
+
+  // Merge scripts instead of overwriting them
+  const existing = pkgJson.content as PackageJsonContent;
+  const updates = pkgJsonUpdates as PackageJsonContent;
+  
+  const mergedScripts = {
+    ...(existing.scripts ?? {}),
+    ...(updates.scripts ?? {}),
+  };
+
+  // Apply all updates first, then restore merged scripts
+  pkgJson.update(updates);
+  pkgJson.update({ scripts: mergedScripts });
+
   await pkgJson.save();
 }
 
 async function initHusky() {
-  await execute('pnpx', 'husky', 'init');
+  await execute('pnpx', 'husky', { cwd: workingDir });
 
   // overwrite the husky pre-commit file with '$packageManager lint-staged'
   const huskyPreCommitFile = path.resolve(workingDir, './.husky/pre-commit');
@@ -84,6 +99,7 @@ async function writeVSCodeSettings() {
   const vsCodeSettingsFile = path.resolve(workingDir, './.vscode/settings.json');
   let contents: object
 
+  // if the directory already has a .vscode/settings.json then append to it with our config
   if(existsSync(vsCodeSettingsFile)){
     const existing = await readFile(vsCodeSettingsFile, {encoding: 'utf-8'});
     const existingJson = JSON.parse(existing);
