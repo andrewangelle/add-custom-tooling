@@ -1,6 +1,10 @@
 import { args } from '~/utils/args.mts';
+import type { PackageManager } from './packageManager.mts';
 
-type Flags = Record<'directory' | 'package_manager', string>;
+type Flags = {
+  directory: string;
+  package_manager: PackageManager;
+};
 
 export const flags: Flags = Object.entries(args).reduce((acc, [key, value]) => {
   key = key.replace(/^--/, '');

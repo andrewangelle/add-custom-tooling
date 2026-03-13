@@ -1,6 +1,13 @@
+import { readdir, rm } from 'node:fs/promises';
+import { join } from 'node:path';
 import { flags } from '~/utils/flags.mts';
+import { workingDir } from '~/utils/paths.mts';
 
-type PackageManager = 'npm' | 'pnpm' | 'yarn' | 'bun';
+export type PackageManager = 'npm' | 'pnpm' | 'yarn' | 'bun';
+
+function isDetected(arg?: string | null): arg is PackageManager {
+  return !!arg;
+}
 
 /**
  * Determine which package manager the user prefers.
@@ -12,9 +19,15 @@ type PackageManager = 'npm' | 'pnpm' | 'yarn' | 'bun';
 export function getPackageManager(): PackageManager | undefined {
   const { npm_config_user_agent } = process.env;
   const { package_manager } = flags;
-  if (!npm_config_user_agent && !package_manager) return 'npm';
+  const detected = npm_config_user_agent || package_manager;
+
+  if (isDetected(detected)) {
+    cleanMismatchedLockfiles(detected);
+  }
+
+  if (!detected) return 'npm';
+
   try {
-    const detected = npm_config_user_agent || package_manager;
     const pkgManager = detected.split('/')[0];
     if (pkgManager === 'npm') return 'npm';
     if (pkgManager === 'pnpm') return 'pnpm';
@@ -24,6 +37,31 @@ export function getPackageManager(): PackageManager | undefined {
   } catch {
     return 'pnpm';
   }
+}
+
+async function cleanMismatchedLockfiles(
+  selected: PackageManager,
+): Promise<void> {
+  const lockfiles: Record<PackageManager, string[]> = {
+    npm: ['package-lock.json'],
+    pnpm: ['pnpm-lock.yaml'],
+    yarn: ['yarn.lock'],
+    bun: ['bun.lockb'],
+  };
+
+  const entries = await readdir(workingDir).catch(() => []);
+  if (!entries.length) return;
+
+  const keep = new Set(lockfiles[selected] ?? []);
+
+  await Promise.all(
+    (Object.values(lockfiles).flat() as string[])
+      .filter((file) => !keep.has(file) && entries.includes(file))
+      .map(async (file) => {
+        const target = join(workingDir, file);
+        await rm(target).catch(() => {});
+      }),
+  );
 }
 
 export function getPackageExec(): string {
