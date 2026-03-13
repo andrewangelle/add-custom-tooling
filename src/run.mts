@@ -1,3 +1,5 @@
+#!/usr/bin/env node
+
 import { initHusky } from '~/actions/initHusky.mts';
 import { installPackages } from '~/actions/installPackages.mts';
 import { updatePackageJson } from '~/actions/updatePackageJson.mts';

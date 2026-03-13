@@ -2,7 +2,10 @@
   "name": "add-custom-tooling",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
+  "main": "dist/run.mjs",
+  "bin": {
+    "add-tooling": "dist/run.mjs"
+  },
   "type": "module",
   "packageManager": "pnpm@9.10.0",
   "scripts": {

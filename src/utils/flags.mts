@@ -6,9 +6,17 @@ type Flags = {
   package_manager: PackageManager;
 };
 
-export const flags: Flags = Object.entries(args).reduce((acc, [key, value]) => {
-  key = key.replace(/^--/, '');
-  key = key.replace(/-/g, '_');
-  acc[key] = value as string;
-  return acc;
-}, {} as Flags);
+const defaultFlags: Flags = {
+  directory: '.',
+  package_manager: 'npm',
+};
+
+export const flags: Flags = Object.entries(args ?? defaultFlags).reduce(
+  (acc, [key, value]) => {
+    key = key.replace(/^--/, '');
+    key = key.replace(/-/g, '_');
+    acc[key] = value as string;
+    return acc;
+  },
+  {} as Flags,
+);
