@@ -1,10 +1,10 @@
 import { existsSync } from 'node:fs';
 import { readFile, writeFile } from 'node:fs/promises';
 import * as path from 'node:path';
-import vsCodeSettings from '../templates/vscode_settings.json' with {
+import vsCodeSettings from '~/templates/vscode_settings.json' with {
   type: 'json',
 };
-import { workingDir } from '../utils.mts';
+import { workingDir } from '~/utils/paths.mts';
 
 export async function writeVSCodeSettings() {
   const vsCodeSettingsFile = path.resolve(

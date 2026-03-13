@@ -1,8 +1,8 @@
 import { existsSync } from 'node:fs';
+import { install } from '~/commands/install.mts';
+import { flags } from '~/utils/flags.mts';
+import invariant from '~/utils/invariant.mts';
 import { workingDir } from '~/utils/paths.mjs';
-import { install } from '../commands/install.mts';
-import { flags } from '../utils/flags.mts';
-import invariant from '../utils/invariant.mts';
 
 export async function installPackages() {
   // Check that the directory we intend to write to exists

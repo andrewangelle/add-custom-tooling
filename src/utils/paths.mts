@@ -1,5 +1,5 @@
 import path from 'node:path';
-import { flags } from './flags.mts';
+import { flags } from '~/utils/flags.mts';
 
 export const codeDir = path.resolve(
   import.meta.dirname,

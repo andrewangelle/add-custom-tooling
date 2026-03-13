@@ -1,6 +1,6 @@
-import { detectPackageManager } from '../utils/packageManager.mts';
-import type { ExecuteOptions } from './execute.mts';
-import { execute } from './execute.mts';
+import type { ExecuteOptions } from '~/commands/execute.mts';
+import { execute } from '~/commands/execute.mts';
+import { detectPackageManager } from '~/utils/packageManager.mts';
 
 export async function install(command: string, cwd?: string) {
   const packageManager = detectPackageManager();

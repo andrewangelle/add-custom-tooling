@@ -1,12 +1,11 @@
 import { existsSync } from 'node:fs';
 import * as path from 'node:path';
 import PackageJson from '@npmcli/package-json';
-import pkgJsonUpdates from '../templates/package_json.json' with {
+import pkgJsonUpdates from '~/templates/package_json.json' with {
   type: 'json',
 };
-import invariant from '../utils/invariant.mts';
-
-import { workingDir } from '../utils.mts';
+import invariant from '~/utils/invariant.mts';
+import { workingDir } from '~/utils/paths.mts';
 
 export type PackageJsonContent = Awaited<
   ReturnType<typeof PackageJson.load>

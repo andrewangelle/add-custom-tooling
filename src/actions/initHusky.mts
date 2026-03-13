@@ -1,6 +1,7 @@
 import { writeFile } from 'node:fs/promises';
 import * as path from 'node:path';
-import { execute, workingDir } from '../utils.mts';
+import { execute } from '~/commands/execute.mts';
+import { workingDir } from '~/utils/paths.mjs';
 
 export async function initHusky() {
   await execute('pnpx', 'husky', { cwd: workingDir });
