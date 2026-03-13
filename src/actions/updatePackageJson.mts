@@ -1,10 +1,10 @@
 import { existsSync } from 'node:fs';
 import * as path from 'node:path';
 import PackageJson from '@npmcli/package-json';
-import invariant from '../invariant.mts';
 import pkgJsonUpdates from '../templates/package_json.json' with {
   type: 'json',
 };
+import invariant from '../utils/invariant.mts';
 
 import { workingDir } from '../utils.mts';
 
