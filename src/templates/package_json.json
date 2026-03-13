@@ -1,12 +1,15 @@
 {
   "scripts": {
-    "lint:fix": "pnpm exec biome check . --write",
-    "lint:check": "pnpm exec biome check .",
-    "format": "pnpm exec biome format . --write",
+    "lint:fix": "{{ PACKAGE_EXEC }} biome check . --write",
+    "lint:check": "{{ PACKAGE_EXEC }} biome check .",
+    "format": "{{ PACKAGE_EXEC }} biome format . --write",
     "pre-commit": "lint-staged",
     "prepare": "husky"
   },
   "lint-staged": {
-    "*.{ts,tsx,js,jsx}": ["pnpm lint:fix", "pnpm format"]
+    "*.{ts,tsx,js,jsx}": [
+      "{{ PACKAGE_RUN }} lint:fix",
+      "{{ PACKAGE_RUN }} format"
+    ]
   }
 }
