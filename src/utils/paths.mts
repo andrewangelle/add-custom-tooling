@@ -1,3 +1,4 @@
 import path from 'node:path';
+import { flags } from '~/utils/flags.mts';
 
-export const workingDir = path.resolve(import.meta.dirname, process.cwd());
+export const workingDir = path.resolve(process.cwd(), flags.directory);
