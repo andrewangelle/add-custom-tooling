@@ -1,3 +1,5 @@
+import { flags } from '~/utils/flags.mts';
+
 type PackageManager = 'npm' | 'pnpm' | 'yarn' | 'bun';
 
 /**
@@ -7,11 +9,13 @@ type PackageManager = 'npm' | 'pnpm' | 'yarn' | 'bun';
  * that can be used to determine which package manager ran
  * the command.
  */
-export const detectPackageManager = (): PackageManager | undefined => {
+export function getPackageManager(): PackageManager | undefined {
   const { npm_config_user_agent } = process.env;
-  if (!npm_config_user_agent) return 'pnpm';
+  const { package_manager } = flags;
+  if (!npm_config_user_agent && !package_manager) return 'npm';
   try {
-    const pkgManager = npm_config_user_agent.split('/')[0];
+    const detected = npm_config_user_agent || package_manager;
+    const pkgManager = detected.split('/')[0];
     if (pkgManager === 'npm') return 'npm';
     if (pkgManager === 'pnpm') return 'pnpm';
     if (pkgManager === 'yarn') return 'yarn';
@@ -20,4 +24,30 @@ export const detectPackageManager = (): PackageManager | undefined => {
   } catch {
     return 'pnpm';
   }
-};
+}
+
+export function getPackageExec(): string {
+  switch (getPackageManager()) {
+    case 'bun':
+      return 'bunx';
+    case 'npm':
+      return 'npx';
+    case 'pnpm':
+      return 'pnpx';
+    case 'yarn':
+      return 'yarn dlx';
+  }
+}
+
+export function getScriptRun(): string {
+  switch (getPackageManager()) {
+    case 'bun':
+      return 'bun run';
+    case 'npm':
+      return 'npm run';
+    case 'pnpm':
+      return 'pnpm';
+    case 'yarn':
+      return 'yarn run';
+  }
+}

@@ -7,7 +7,7 @@
   "packageManager": "pnpm@9.10.0",
   "scripts": {
     "clean": "rm -rf ./dist",
-    "build": "pnpm clean && tsup",
+    "build": "pnpm clean && tsdown",
     "lint:fix": "pnpm exec biome check . --write --unsafe",
     "lint:check": "pnpm exec biome check .",
     "format": "pnpm exec biome format . --write",
@@ -28,7 +28,7 @@
     "@types/npmcli__package-json": "^4.0.4",
     "husky": "^9.1.7",
     "lint-staged": "^16.2.6",
-    "tsup": "^8.5.0",
+    "tsdown": "^0.21.2",
     "typescript": "^5.9.3"
   },
   "lint-staged": {

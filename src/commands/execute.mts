@@ -2,6 +2,12 @@ import { execa, type Options } from 'execa';
 
 export type ExecuteOptions = Pick<Options, 'cwd'>;
 
+function isExecuteOptions(
+  options: string | ExecuteOptions,
+): options is ExecuteOptions {
+  return options && typeof options === 'object' && !Array.isArray(options);
+}
+
 export async function execute(
   command: string,
   ...args: (string | ExecuteOptions)[]
@@ -10,10 +16,10 @@ export async function execute(
     let options: ExecuteOptions = {};
     let cmdArgs = args;
 
-    const last = args[args.length - 1];
+    const lastArg = args.at(-1);
 
-    if (last && typeof last === 'object' && !Array.isArray(last)) {
-      options = last as ExecuteOptions;
+    if (isExecuteOptions(lastArg)) {
+      options = lastArg;
       cmdArgs = args.slice(0, -1);
     }
 
@@ -32,4 +38,3 @@ export async function execute(
     return `command failed: ${(error as Error).message}`;
   }
 }
-
