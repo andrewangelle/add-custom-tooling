@@ -14,13 +14,14 @@ export async function execute(
 ) {
   try {
     let options: ExecuteOptions = {};
-    let cmdArgs = args;
+    const cmdArgs: string[] = [];
 
-    const lastArg = args.at(-1);
-
-    if (isExecuteOptions(lastArg)) {
-      options = lastArg;
-      cmdArgs = args.slice(0, -1);
+    for (const arg of args) {
+      if (isExecuteOptions(arg)) {
+        options = { ...options, ...arg };
+      } else {
+        cmdArgs.push(arg);
+      }
     }
 
     const script = execa(command, cmdArgs as string[], {
@@ -34,7 +35,8 @@ export async function execute(
 
     return 'completed successfully';
   } catch (error) {
-    console.error('command failed:', (error as Error).message);
-    return `command failed: ${(error as Error).message}`;
+    const err = error as Error;
+    console.error('command failed:', err.message);
+    return `command failed: ${err.message}`;
   }
 }
