@@ -1,5 +1,5 @@
 import { args } from '~/utils/args.mts';
-import type { PackageManager } from './packageManager.mts';
+import type { PackageManager } from '~/utils/packageManager.mts';
 
 type Flags = {
   directory: string;
@@ -12,14 +12,17 @@ const defaultFlags: Flags = {
   package_manager: 'npm',
 };
 
-const merged: Record<string, unknown> = {
+const merged: Flags = {
   ...defaultFlags,
-  ...(args as Record<string, unknown>),
+  ...args,
 };
 
-export const flags: Flags = Object.entries(merged).reduce((acc, [key, value]) => {
-  key = key.replace(/^--/, '');
-  key = key.replace(/-/g, '_');
-  (acc as Record<string, unknown>)[key] = value;
-  return acc;
-}, {} as Flags);
+export const flags: Flags = Object.entries(merged).reduce(
+  (acc, [key, value]) => {
+    key = key.replace(/^--/, '');
+    key = key.replace(/-/g, '_');
+    acc[key] = value;
+    return acc;
+  },
+  {} as Flags,
+);
