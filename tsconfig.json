@@ -1,5 +1,6 @@
 {
   "compilerOptions": {
+    "types": ["node", "vitest/globals"],
     "moduleResolution": "nodenext",
     "module": "nodenext",
     "target": "es2024",
@@ -8,8 +9,9 @@
     "noEmit": true,
     "allowImportingTsExtensions": true,
     "paths": {
-      "~/*": ["./src/*"]
+      "~/*": ["./src/*"],
+      "~tests/*": ["./tests/*"]
     }
   },
-  "include": ["src/**/*"]
+  "include": ["src/**/*", "tests/**/*"]
 }

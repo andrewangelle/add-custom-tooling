@@ -11,6 +11,8 @@
   "scripts": {
     "clean": "rm -rf ./dist",
     "build": "pnpm clean && tsdown",
+    "test": "pnpm build && vitest run",
+    "test:coverage": "pnpm test -- --coverage",
     "lint:fix": "pnpm exec biome check . --write --unsafe",
     "lint:check": "pnpm exec biome check .",
     "format": "pnpm exec biome format . --write",
@@ -29,10 +31,12 @@
     "@biomejs/biome": "^2.3.2",
     "@types/node": "^24.9.2",
     "@types/npmcli__package-json": "^4.0.4",
+    "@vitest/coverage-v8": "^4.1.0",
     "husky": "^9.1.7",
     "lint-staged": "^16.2.6",
     "tsdown": "^0.21.2",
-    "typescript": "^5.9.3"
+    "typescript": "^5.9.3",
+    "vitest": "^4.1.0"
   },
   "lint-staged": {
     "*.{ts,tsx,js,jsx}": [
