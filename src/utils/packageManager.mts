@@ -64,7 +64,7 @@ async function cleanMismatchedLockfiles(
   );
 }
 
-export function getPackageExec(): string {
+export function getPackageManagerExec(): string {
   switch (getPackageManager()) {
     case 'bun':
       return 'bunx';
@@ -77,7 +77,7 @@ export function getPackageExec(): string {
   }
 }
 
-export function getScriptRun(): string {
+export function getPackageMangerScriptRun(): string {
   switch (getPackageManager()) {
     case 'bun':
       return 'bun run';

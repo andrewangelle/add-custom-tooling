@@ -1,16 +1,13 @@
 import { existsSync } from 'node:fs';
 import { readFile, writeFile } from 'node:fs/promises';
-import * as path from 'node:path';
+import { resolve } from 'node:path';
 import vsCodeSettings from '~/templates/vscode_settings.json' with {
   type: 'json',
 };
 import { workingDir } from '~/utils/paths.mts';
 
 export async function writeVSCodeSettings() {
-  const vsCodeSettingsFile = path.resolve(
-    workingDir,
-    './.vscode/settings.json',
-  );
+  const vsCodeSettingsFile = resolve(workingDir, './.vscode/settings.json');
   let contents: object;
 
   // if the directory already has a .vscode/settings.json then append to it with our config

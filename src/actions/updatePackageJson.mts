@@ -1,11 +1,14 @@
 import { existsSync } from 'node:fs';
-import * as path from 'node:path';
+import { resolve } from 'node:path';
 import PackageJson from '@npmcli/package-json';
 import pkgJsonUpdates from '~/templates/package_json.json' with {
   type: 'json',
 };
 import invariant from '~/utils/invariant.mts';
-import { getPackageExec, getScriptRun } from '~/utils/packageManager.mts';
+import {
+  getPackageManagerExec,
+  getPackageMangerScriptRun,
+} from '~/utils/packageManager.mts';
 import { workingDir } from '~/utils/paths.mts';
 
 export type PackageJsonContent = Awaited<
@@ -14,7 +17,7 @@ export type PackageJsonContent = Awaited<
 
 export async function updatePackageJson() {
   // check that package.json file exists
-  const packageJsonPath = path.resolve(workingDir, './package.json');
+  const packageJsonPath = resolve(workingDir, './package.json');
   const noPackageJsonMessage = `package.json does not exist at \`${packageJsonPath}\``;
 
   invariant(existsSync(packageJsonPath), noPackageJsonMessage);
@@ -45,8 +48,8 @@ function getScriptsContents(): PackageJsonContent {
   const replacePlaceholders = (value: unknown): unknown => {
     if (typeof value === 'string') {
       return value
-        .replace('{{ PACKAGE_EXEC }}', getPackageExec())
-        .replace('{{ PACKAGE_RUN }}', getScriptRun());
+        .replace('{{ PACKAGE_EXEC }}', getPackageManagerExec())
+        .replace('{{ PACKAGE_RUN }}', getPackageMangerScriptRun());
     }
 
     if (Array.isArray(value)) {
@@ -55,7 +58,10 @@ function getScriptsContents(): PackageJsonContent {
 
     if (value && typeof value === 'object') {
       return Object.fromEntries(
-        Object.entries(value).map(([k, v]) => [k, replacePlaceholders(v)]),
+        Object.entries(value).map(([key, value]) => [
+          key,
+          replacePlaceholders(value),
+        ]),
       );
     }
 

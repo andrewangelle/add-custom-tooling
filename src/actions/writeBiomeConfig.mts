@@ -1,11 +1,11 @@
 import { writeFile } from 'node:fs/promises';
-import * as path from 'node:path';
+import { resolve } from 'node:path';
 import biomeConfig from '~/templates/biome_json.json' with { type: 'json' };
 import { workingDir } from '~/utils/paths.mts';
 
 export async function writeBiomeConfig() {
   await writeFile(
-    path.resolve(workingDir, './biome.json'),
+    resolve(workingDir, './biome.json'),
     JSON.stringify(biomeConfig),
   );
 }
