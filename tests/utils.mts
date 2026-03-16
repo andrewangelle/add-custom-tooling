@@ -10,14 +10,14 @@ export function stringifyJSON(arg: object): string {
 }
 
 export function setupTempProject() {
-  let tempDir: string;
+  let tempDirPath: string;
 
   return {
     async create() {
-      tempDir = await mkdtemp(join(tmpdir(), 'add-tooling-'));
+      tempDirPath = await mkdtemp(join(tmpdir(), 'add-tooling-'));
 
       await writeFile(
-        join(tempDir, 'package.json'),
+        join(tempDirPath, 'package.json'),
         stringifyJSON({
           name: 'temp-project',
           version: '1.0.0',
@@ -27,15 +27,15 @@ export function setupTempProject() {
 
       // Ensure the husky directory exists so our implementation can
       // overwrite the pre-commit file even if the husky CLI fails.
-      await mkdir(join(tempDir, '.husky'), { recursive: true });
-      await mkdir(join(tempDir, '.vscode'), { recursive: true });
+      await mkdir(join(tempDirPath, '.husky'), { recursive: true });
+      await mkdir(join(tempDirPath, '.vscode'), { recursive: true });
     },
     async clean() {
-      await rm(tempDir, { recursive: true, force: true });
-      tempDir = '';
+      await rm(tempDirPath, { recursive: true, force: true });
+      tempDirPath = '';
     },
     getTempDir() {
-      return tempDir;
+      return tempDirPath;
     },
   };
 }
