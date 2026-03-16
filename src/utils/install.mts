@@ -1,5 +1,5 @@
-import type { ExecuteOptions } from '~/commands/execute.mts';
-import { execute } from '~/commands/execute.mts';
+import type { ExecuteOptions } from '~/utils/execute.mjs';
+import { execute } from '~/utils/execute.mjs';
 import { getPackageManager } from '~/utils/packageManager.mts';
 
 export async function install(command: string, cwd?: string) {

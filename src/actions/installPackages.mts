@@ -1,6 +1,6 @@
 import { existsSync } from 'node:fs';
-import { install } from '~/commands/install.mts';
 import { flags } from '~/utils/flags.mts';
+import { install } from '~/utils/install.mjs';
 import invariant from '~/utils/invariant.mts';
 import { workingDir } from '~/utils/paths.mts';
 

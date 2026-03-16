@@ -1,6 +1,6 @@
 import { writeFile } from 'node:fs/promises';
 import * as path from 'node:path';
-import { execute } from '~/commands/execute.mts';
+import { execute } from '~/utils/execute.mjs';
 import {
   getPackageManagerExec,
   getPackageMangerScriptRun,
