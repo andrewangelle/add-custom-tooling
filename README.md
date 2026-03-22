@@ -1,6 +1,6 @@
 # add-custom-tooling
 
-A local cli tool I created to automate setting up new repositories on my local machine with my preferred tooling.
+A cli tool to automate configuring repositories the local machine with preferred tooling.
 
 
 ## Set up
@@ -45,3 +45,11 @@ $  add-tooling [options]
   
   `-h, --help`                    
   Show this help message
+
+## Features
+
+- Linting and formatting with (Biome)[https://biomejs.dev/]
+- Git hooks with (Husky)[https://typicode.github.io/husky/]
+- Sets up a pre commit hook to run linter and formatter with (lint-staged)[https://github.com/lint-staged/lint-staged]
+- Sets up vscode settings for biome and auto save
+- Supports tailoring the configuration for different package managers: `npm`, `pnpm`, `yarn`, `bun`
