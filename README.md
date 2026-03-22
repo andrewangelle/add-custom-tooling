@@ -48,8 +48,8 @@ $  add-tooling [options]
 
 ## Features
 
-- Linting and formatting with (Biome)[https://biomejs.dev/]
-- Git hooks with (Husky)[https://typicode.github.io/husky/]
-- Sets up a pre commit hook to run linter and formatter with (lint-staged)[https://github.com/lint-staged/lint-staged]
+- Linting and formatting with [Biome](https://biomejs.dev/)
+- Git hooks with [Husky](https://typicode.github.io/husky/)
+- Sets up a pre commit hook to run linter and formatter with [lint-staged](https://github.com/lint-staged/lint-staged)
 - Sets up vscode settings for biome and auto save
 - Supports tailoring the configuration for different package managers: `npm`, `pnpm`, `yarn`, `bun`
