@@ -2,12 +2,9 @@ import { mkdir, mkdtemp, rm, writeFile } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { stringifyJSON } from '~/utils/json.mts';
 
 export const __dirname = dirname(fileURLToPath(import.meta.url));
-
-export function stringifyJSON(arg: object): string {
-  return JSON.stringify(arg, null, 2);
-}
 
 export function setupTempProject() {
   let tempDirPath: string;
