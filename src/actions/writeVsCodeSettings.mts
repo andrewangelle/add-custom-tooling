@@ -4,10 +4,11 @@ import { resolve } from 'node:path';
 import vsCodeSettings from '~/templates/vscode_settings.json' with {
   type: 'json',
 };
+import { destFiles } from '~/utils/constants.mts';
 import { workingDir } from '~/utils/paths.mts';
 
 export async function writeVSCodeSettings() {
-  const vsCodeSettingsFile = resolve(workingDir, './.vscode/settings.json');
+  const vsCodeSettingsFile = resolve(workingDir, destFiles.vscode);
   let contents: object;
 
   // if the directory already has a .vscode/settings.json then append to it with our config

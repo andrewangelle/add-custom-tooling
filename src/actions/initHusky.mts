@@ -1,5 +1,6 @@
 import { writeFile } from 'node:fs/promises';
-import * as path from 'node:path';
+import { resolve } from 'node:path';
+import { destFiles, packageNames } from '~/utils/constants.mjs';
 import { execute } from '~/utils/execute.mjs';
 import {
   getPackageManagerExec,
@@ -8,11 +9,13 @@ import {
 import { workingDir } from '~/utils/paths.mjs';
 
 export async function initHusky() {
-  const exec = getPackageManagerExec();
-  await execute(exec, 'husky', { cwd: workingDir });
+  // execute husky init
+  await execute(getPackageManagerExec(), packageNames.husky, {
+    cwd: workingDir,
+  });
 
-  // overwrite the husky pre-commit file with '$packageManager lint-staged'
-  const huskyPreCommitFile = path.resolve(workingDir, './.husky/pre-commit');
-  const scriptRun = getPackageMangerScriptRun();
-  await writeFile(huskyPreCommitFile, `${scriptRun} lint-staged`);
+  // overwrite the husky pre-commit file with precommit command
+  const huskyPreCommitFile = resolve(workingDir, destFiles.husky);
+  const preCommitCommand = `${getPackageMangerScriptRun()} ${packageNames.lintStaged}`;
+  await writeFile(huskyPreCommitFile, preCommitCommand);
 }

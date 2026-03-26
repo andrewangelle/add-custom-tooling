@@ -6,6 +6,7 @@
     "includes": [
       "**/server/**",
       "**/src/**",
+      "!**/coverage",
       "!**/.react-router",
       "!**/build",
       "!**/dist",

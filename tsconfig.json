@@ -4,7 +4,6 @@
     "moduleResolution": "nodenext",
     "module": "nodenext",
     "target": "es2024",
-    "baseUrl": ".",
     "outDir": "dist",
     "noEmit": true,
     "allowImportingTsExtensions": true,

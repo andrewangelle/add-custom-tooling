@@ -9,10 +9,8 @@ export default defineConfig([
     format: ["esm"],
     outDir: "dist",
     dts: true,
-    noExternal: [
-      'arg',
-      '@npmcli/package-json',
-      'execa'
-    ]
+    deps: {
+      onlyBundle: false
+    }
   }
 ])

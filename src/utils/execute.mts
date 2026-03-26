@@ -5,7 +5,9 @@ export type ExecuteOptions = Pick<Options, 'cwd'>;
 function isExecuteOptions(
   options: string | ExecuteOptions,
 ): options is ExecuteOptions {
-  return options && typeof options === 'object' && !Array.isArray(options);
+  return Boolean(
+    options && typeof options === 'object' && !Array.isArray(options),
+  );
 }
 
 export async function execute(

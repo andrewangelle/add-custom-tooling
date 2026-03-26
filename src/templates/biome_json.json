@@ -16,7 +16,8 @@
       "!**/build",
       "!**/dist",
       "!**/public",
-      "!**/node_modules"
+      "!**/node_modules",
+      "./.vscode/settings.json"
     ]
   },
   "formatter": {

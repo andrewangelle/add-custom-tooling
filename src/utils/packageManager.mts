@@ -16,7 +16,7 @@ function isDetected(arg?: string | null): arg is PackageManager {
  * that can be used to determine which package manager ran
  * the command.
  */
-export function getPackageManager(): PackageManager | undefined {
+export function getPackageManager(): PackageManager {
   const { npm_config_user_agent } = process.env;
   const { package_manager } = flags;
   const detected = npm_config_user_agent || package_manager;
@@ -49,7 +49,7 @@ async function cleanMismatchedLockfiles(
     bun: ['bun.lockb'],
   };
 
-  const entries = await readdir(workingDir).catch(() => []);
+  const entries = await readdir(workingDir).catch(() => [] as string[]);
   if (!entries.length) return;
 
   const keep = new Set(lockfiles[selected] ?? []);
