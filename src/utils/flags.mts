@@ -1,15 +1,14 @@
-import { args } from '~/utils/args.mts';
-import type { PackageManager } from '~/utils/packageManager.mts';
+import { args } from '../utils/args.mts';
+import type { PackageManager } from '../utils/packageManager.mts';
 
 type Flags = {
   directory: string;
-  package_manager: PackageManager;
+  package_manager?: PackageManager;
   help?: boolean;
 };
 
 const defaultFlags: Flags = {
   directory: '.',
-  package_manager: 'npm',
 };
 
 const merged: Flags = {

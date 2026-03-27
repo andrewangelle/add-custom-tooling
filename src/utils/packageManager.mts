@@ -1,3 +1,4 @@
+import { existsSync } from 'node:fs';
 import { readdir, rm } from 'node:fs/promises';
 import { join } from 'node:path';
 import { flags } from '~/utils/flags.mts';
@@ -5,8 +6,38 @@ import { workingDir } from '~/utils/paths.mts';
 
 export type PackageManager = 'npm' | 'pnpm' | 'yarn' | 'bun';
 
-function isDetected(arg?: string | null): arg is PackageManager {
+const lockfiles: Record<PackageManager, string[]> = {
+  npm: ['package-lock.json'],
+  pnpm: ['pnpm-lock.yaml'],
+  yarn: ['yarn.lock'],
+  bun: ['bun.lockb'],
+};
+
+function isPackageManagerDetected(arg?: string | null): arg is PackageManager {
   return !!arg;
+}
+
+function hasMismatchedLockfile(arg?: PackageManager | null) {
+  return (Object.values(lockfiles).flat() as string[])
+    .filter((file) => arg && file !== lockfiles[arg]?.[0])
+    .some((file) => existsSync(join(workingDir, file)));
+}
+
+function detectPackageManager() {
+  const { npm_config_user_agent } = process.env;
+  const { package_manager } = flags;
+  const detected = npm_config_user_agent || package_manager;
+
+  const lockfilesNames = Object.entries(lockfiles).map(([pkgmgr, file]) => [
+    pkgmgr,
+    file[0],
+  ]);
+
+  const matchedLockfile = lockfilesNames.filter(([_pkgmgr, file]) =>
+    existsSync(join(workingDir, file)),
+  );
+
+  return detected ?? matchedLockfile[0][0];
 }
 
 /**
@@ -17,11 +48,8 @@ function isDetected(arg?: string | null): arg is PackageManager {
  * the command.
  */
 export function getPackageManager(): PackageManager {
-  const { npm_config_user_agent } = process.env;
-  const { package_manager } = flags;
-  const detected = npm_config_user_agent || package_manager;
-
-  if (isDetected(detected)) {
+  const detected = detectPackageManager();
+  if (isPackageManagerDetected(detected) && hasMismatchedLockfile(detected)) {
     cleanMismatchedLockfiles(detected);
   }
 
@@ -42,13 +70,6 @@ export function getPackageManager(): PackageManager {
 async function cleanMismatchedLockfiles(
   selected: PackageManager,
 ): Promise<void> {
-  const lockfiles: Record<PackageManager, string[]> = {
-    npm: ['package-lock.json'],
-    pnpm: ['pnpm-lock.yaml'],
-    yarn: ['yarn.lock'],
-    bun: ['bun.lockb'],
-  };
-
   const entries = await readdir(workingDir).catch(() => [] as string[]);
   if (!entries.length) return;
 
