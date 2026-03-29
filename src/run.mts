@@ -6,6 +6,7 @@ import { updatePackageJson } from '~/actions/updatePackageJson.mts';
 import { writeBiomeConfig } from '~/actions/writeBiomeConfig.mts';
 import { writeVSCodeSettings } from '~/actions/writeVsCodeSettings.mts';
 import { flags } from '~/utils/flags.mts';
+import { syncLockfileWithPackageManager } from './utils/packageManager.mts';
 
 if (flags.help) {
   console.log(`add-tooling
@@ -21,6 +22,7 @@ Options:
   process.exit(0);
 }
 
+await syncLockfileWithPackageManager();
 await installPackages();
 await writeBiomeConfig();
 await updatePackageJson();

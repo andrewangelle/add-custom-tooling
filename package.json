@@ -45,7 +45,7 @@
     "vitest": "^4.1.0"
   },
   "lint-staged": {
-    "*.{ts,tsx,js,jsx}": [
+    "*.{mts,mjs,ts,tsx,js,jsx}": [
       "pnpm lint:fix",
       "pnpm format"
     ]

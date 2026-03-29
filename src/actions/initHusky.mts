@@ -3,14 +3,14 @@ import { resolve } from 'node:path';
 import { destFiles, packageNames } from '~/utils/constants.mjs';
 import { execute } from '~/utils/execute.mjs';
 import {
-  getPackageManagerExec,
+  getPackageManagerRemoteExec,
   getPackageMangerScriptRun,
 } from '~/utils/packageManager.mjs';
 import { workingDir } from '~/utils/paths.mjs';
 
 export async function initHusky() {
   // execute husky init
-  await execute(getPackageManagerExec(), packageNames.husky, {
+  await execute(getPackageManagerRemoteExec(), packageNames.husky, {
     cwd: workingDir,
   });
 

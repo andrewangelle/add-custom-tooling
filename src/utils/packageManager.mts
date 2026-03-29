@@ -13,6 +13,76 @@ const lockfiles: Record<PackageManager, string[]> = {
   bun: ['bun.lockb'],
 };
 
+/**
+ * Determine which package manager the user prefers.
+ *
+ * npm, pnpm and Yarn set the user agent environment variable
+ * that can be used to determine which package manager ran
+ * the command.
+ */
+export function getPackageManager(): PackageManager {
+  const detected = detectPackageManager();
+
+  if (!detected) return 'npm';
+
+  try {
+    const pkgManager = detected.split('/')[0];
+    if (pkgManager === 'npm') return 'npm';
+    if (pkgManager === 'pnpm') return 'pnpm';
+    if (pkgManager === 'yarn') return 'yarn';
+    if (pkgManager === 'bun') return 'bun';
+    return 'pnpm';
+  } catch {
+    return 'pnpm';
+  }
+}
+
+export function getPackageManagerRemoteExec(): string {
+  switch (getPackageManager()) {
+    case 'bun':
+      return 'bunx';
+    case 'npm':
+      return 'npx';
+    case 'pnpm':
+      return 'pnpx';
+    case 'yarn':
+      return 'yarn dlx';
+  }
+}
+
+export function getPackageManagerExec(): string {
+  switch (getPackageManager()) {
+    case 'bun':
+      return 'bunx';
+    case 'npm':
+      return 'npm exec';
+    case 'pnpm':
+      return 'pnpm exec';
+    case 'yarn':
+      return 'yarn';
+  }
+}
+
+export function getPackageMangerScriptRun(): string {
+  switch (getPackageManager()) {
+    case 'bun':
+      return 'bun run';
+    case 'npm':
+      return 'npm run';
+    case 'pnpm':
+      return 'pnpm';
+    case 'yarn':
+      return 'yarn run';
+  }
+}
+
+export async function syncLockfileWithPackageManager() {
+  const detected = detectPackageManager();
+  if (isPackageManagerDetected(detected) && hasMismatchedLockfile(detected)) {
+    cleanMismatchedLockfiles(detected);
+  }
+}
+
 function isPackageManagerDetected(arg?: string | null): arg is PackageManager {
   return !!arg;
 }
@@ -40,33 +110,6 @@ function detectPackageManager() {
   return detected ?? matchedLockfile[0][0];
 }
 
-/**
- * Determine which package manager the user prefers.
- *
- * npm, pnpm and Yarn set the user agent environment variable
- * that can be used to determine which package manager ran
- * the command.
- */
-export function getPackageManager(): PackageManager {
-  const detected = detectPackageManager();
-  if (isPackageManagerDetected(detected) && hasMismatchedLockfile(detected)) {
-    cleanMismatchedLockfiles(detected);
-  }
-
-  if (!detected) return 'npm';
-
-  try {
-    const pkgManager = detected.split('/')[0];
-    if (pkgManager === 'npm') return 'npm';
-    if (pkgManager === 'pnpm') return 'pnpm';
-    if (pkgManager === 'yarn') return 'yarn';
-    if (pkgManager === 'bun') return 'bun';
-    return 'pnpm';
-  } catch {
-    return 'pnpm';
-  }
-}
-
 async function cleanMismatchedLockfiles(
   selected: PackageManager,
 ): Promise<void> {
@@ -83,30 +126,4 @@ async function cleanMismatchedLockfiles(
         await rm(target).catch(() => {});
       }),
   );
-}
-
-export function getPackageManagerExec(): string {
-  switch (getPackageManager()) {
-    case 'bun':
-      return 'bunx';
-    case 'npm':
-      return 'npx';
-    case 'pnpm':
-      return 'pnpx';
-    case 'yarn':
-      return 'yarn dlx';
-  }
-}
-
-export function getPackageMangerScriptRun(): string {
-  switch (getPackageManager()) {
-    case 'bun':
-      return 'bun run';
-    case 'npm':
-      return 'npm run';
-    case 'pnpm':
-      return 'pnpm';
-    case 'yarn':
-      return 'yarn run';
-  }
 }
