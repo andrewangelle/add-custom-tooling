@@ -1,6 +1,6 @@
 import { existsSync } from 'node:fs';
-import { readFile, writeFile } from 'node:fs/promises';
-import { resolve } from 'node:path';
+import { mkdir, readFile, writeFile } from 'node:fs/promises';
+import { dirname, resolve } from 'node:path';
 import vsCodeSettings from '~/templates/vscode_settings.json' with {
   type: 'json',
 };
@@ -20,7 +20,9 @@ export async function writeVSCodeSettings() {
       ...vsCodeSettings,
     };
   } else {
+    // create the .vscode/settings.json file if it doesn't exist
     contents = vsCodeSettings;
+    await mkdir(dirname(vsCodeSettingsFile), { recursive: true });
   }
 
   await writeFile(vsCodeSettingsFile, JSON.stringify(contents));

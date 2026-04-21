@@ -1,6 +1,7 @@
 import { readFile } from 'node:fs/promises';
 import { join, resolve } from 'node:path';
 import { execa } from 'execa';
+import type { PackageManager } from '~/utils/packageManager.mjs';
 import { __dirname, setupTempProject } from '~tests/utils.mts';
 
 const { create, clean, getTempDir } = setupTempProject();
@@ -10,19 +11,12 @@ describe('add-tooling integration', () => {
   afterEach(clean);
 
   it('configures a project', async () => {
-    const tempDir = getTempDir();
-    const packageJsonPath = join(tempDir, 'package.json');
+    const cwd = getTempDir();
+    const packageJsonPath = join(cwd, 'package.json');
     const cliEntry = resolve(__dirname, '../dist/run.mjs');
 
-    await execa('node', [cliEntry, '--directory', '.'], {
-      cwd: tempDir,
-      env: {
-        // Prefer pnpm when running under pnpm, but allow fallback to npm.
-        ...process.env,
-        npm_config_user_agent:
-          process.env.npm_config_user_agent ?? 'pnpm/9.0.0 node/v22.0.0',
-      },
-    });
+    // run the command
+    await execa('node', [cliEntry], { cwd });
 
     // package json
     const updatedPkgRaw = await readFile(packageJsonPath, 'utf8');
@@ -37,21 +31,45 @@ describe('add-tooling integration', () => {
     expect(updatedPkg.devDependencies?.['@biomejs/biome']).toBeTypeOf('string');
 
     // biome
-    const biomeConfig = await readFile(join(tempDir, 'biome.json'), 'utf8');
+    const biomeConfig = await readFile(join(cwd, 'biome.json'), 'utf8');
     expect(biomeConfig.length).toBeGreaterThan(0);
 
     // husky
     const huskyPreCommit = await readFile(
-      join(tempDir, '.husky', 'pre-commit'),
+      join(cwd, '.husky', 'pre-commit'),
       'utf8',
     );
     expect(huskyPreCommit).toContain('lint-staged');
 
     // vscode
     const vsCodeSettings = await readFile(
-      join(tempDir, '.vscode', 'settings.json'),
+      join(cwd, '.vscode', 'settings.json'),
       'utf8',
     );
     expect(vsCodeSettings.length).toBeGreaterThan(0);
+  });
+});
+
+const packageManagers = [
+  'npm',
+  'yarn',
+  'pnpm',
+  'bun',
+] satisfies PackageManager[];
+
+describe.each(packageManagers)('add-tooling detect-pkg-mgr', (pkgManager) => {
+  beforeEach(async () => {
+    await create({ pkgManager });
+  });
+
+  afterEach(clean);
+
+  it(`${pkgManager}`, async () => {
+    const cwd = getTempDir();
+    const cliEntry = resolve(__dirname, '../dist/run.mjs');
+
+    const result = await execa('node', [cliEntry, 'detect-pkg-mgr'], { cwd });
+
+    expect(result.stdout).toBe(pkgManager);
   });
 });

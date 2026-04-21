@@ -1,12 +1,11 @@
 import { existsSync } from 'node:fs';
-import { readdir, rm } from 'node:fs/promises';
 import { join } from 'node:path';
 import { flags } from '~/utils/flags.mts';
 import { workingDir } from '~/utils/paths.mts';
 
 export type PackageManager = 'npm' | 'pnpm' | 'yarn' | 'bun';
 
-const lockfiles: Record<PackageManager, string[]> = {
+export const lockfiles: Record<PackageManager, string[]> = {
   npm: ['package-lock.json'],
   pnpm: ['pnpm-lock.yaml'],
   yarn: ['yarn.lock'],
@@ -21,20 +20,7 @@ const lockfiles: Record<PackageManager, string[]> = {
  * the command.
  */
 export function getPackageManager(): PackageManager {
-  const detected = detectPackageManager();
-
-  if (!detected) return 'npm';
-
-  try {
-    const pkgManager = detected.split('/')[0];
-    if (pkgManager === 'npm') return 'npm';
-    if (pkgManager === 'pnpm') return 'pnpm';
-    if (pkgManager === 'yarn') return 'yarn';
-    if (pkgManager === 'bun') return 'bun';
-    return 'pnpm';
-  } catch {
-    return 'pnpm';
-  }
+  return detectPackageManager();
 }
 
 export function getPackageManagerRemoteExec(): string {
@@ -76,54 +62,23 @@ export function getPackageMangerScriptRun(): string {
   }
 }
 
-export async function syncLockfileWithPackageManager() {
-  const detected = detectPackageManager();
-  if (isPackageManagerDetected(detected) && hasMismatchedLockfile(detected)) {
-    cleanMismatchedLockfiles(detected);
-  }
-}
-
-function isPackageManagerDetected(arg?: string | null): arg is PackageManager {
-  return !!arg;
-}
-
-function hasMismatchedLockfile(arg?: PackageManager | null) {
-  return (Object.values(lockfiles).flat() as string[])
-    .filter((file) => arg && file !== lockfiles[arg]?.[0])
-    .some((file) => existsSync(join(workingDir, file)));
-}
-
-function detectPackageManager() {
+export function detectPackageManager(): PackageManager {
   const { npm_config_user_agent } = process.env;
   const { package_manager } = flags;
-  const detected = npm_config_user_agent || package_manager;
+  const userDefined = npm_config_user_agent || package_manager;
 
-  const lockfilesNames = Object.entries(lockfiles).map(([pkgmgr, file]) => [
-    pkgmgr,
-    file[0],
-  ]);
+  if (userDefined) {
+    return userDefined as PackageManager;
+  }
 
-  const matchedLockfile = lockfilesNames.filter(([_pkgmgr, file]) =>
-    existsSync(join(workingDir, file)),
-  );
+  const matchedLockfile = Object.values(lockfiles)
+    .flat()
+    .filter((file) => existsSync(join(workingDir, file)));
 
-  return detected ?? matchedLockfile[0][0];
-}
+  const [detected] =
+    Object.entries(lockfiles).find(([_, files]) =>
+      files.includes(matchedLockfile[0]),
+    ) ?? [];
 
-async function cleanMismatchedLockfiles(
-  selected: PackageManager,
-): Promise<void> {
-  const entries = await readdir(workingDir).catch(() => [] as string[]);
-  if (!entries.length) return;
-
-  const keep = new Set(lockfiles[selected] ?? []);
-
-  await Promise.all(
-    (Object.values(lockfiles).flat() as string[])
-      .filter((file) => !keep.has(file) && entries.includes(file))
-      .map(async (file) => {
-        const target = join(workingDir, file);
-        await rm(target).catch(() => {});
-      }),
-  );
+  return (detected ?? 'npm') as PackageManager;
 }
