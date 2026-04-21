@@ -1,7 +1,7 @@
 {
   "name": "add-custom-tooling",
   "version": "1.0.1",
-  "description": "A cli tool to automate configuring repositories the local machine with preferred tooling.",
+  "description": "A cli tool to automate configuring repositories on the local machine with preferred tooling.",
   "main": "dist/run.mjs",
   "types": "dist/run.d.mts",
   "bin": {
@@ -13,6 +13,7 @@
     "clean": "rm -rf ./dist",
     "build": "pnpm clean && tsdown",
     "test": "pnpm build && vitest run",
+    "test:watch": "pnpm build && vitest",
     "test:coverage": "pnpm test -- --coverage",
     "test:types": "tsc --noEmit",
     "lint:fix": "pnpm exec biome check . --write --unsafe",

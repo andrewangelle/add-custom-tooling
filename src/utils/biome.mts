@@ -7,14 +7,12 @@ import {
 } from '~/utils/constants.mts';
 import { stringifyJSON } from '~/utils/json.mts';
 
-/** TYPES */
 type NpmPackageMetadata = {
   'dist-tags'?: { latest?: string };
 };
 
-/** IMPLEMENTATION */
 /**
- * Gets the latest biome version from the npm register
+ * Gets the latest biome version from the npm registry
  */
 export async function getLatestBiomeVersion(): Promise<string> {
   const url = `${NPM_REGISTRY}/${encodeURIComponent(packageNames.biome)}`;

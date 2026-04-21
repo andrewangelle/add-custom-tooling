@@ -1,5 +1,5 @@
-import { args } from '../utils/args.mts';
-import type { PackageManager } from '../utils/packageManager.mts';
+import { args } from '~/utils/args.mts';
+import type { PackageManager } from '~/utils/packageManager.mts';
 
 type Flags = {
   directory: string;
@@ -18,11 +18,9 @@ const merged: Flags = {
 
 function normalizeFlagKey(key: string): keyof Flags | undefined {
   const normalized = key.replace(/^--/, '').replace(/-/g, '_');
-
   if (normalized === 'directory') return 'directory';
   if (normalized === 'package_manager') return 'package_manager';
   if (normalized === 'help') return 'help';
-
   return undefined;
 }
 
