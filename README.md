@@ -33,7 +33,7 @@ $ npm i -g .
 
 ## Usage
 ```sh
-$  add-tooling [options]
+$  add-tooling [options] [command]
 ```
 
 ## Options:
@@ -45,6 +45,12 @@ $  add-tooling [options]
   
   `-h, --help`                    
   Show this help message
+
+## Commands:
+_Note: Passing no command is default and will run the tool. The following are optional_ 
+
+  `detect-pkg-mgr`
+  Which package manager is being used in the project?
 
 ## Features
 
